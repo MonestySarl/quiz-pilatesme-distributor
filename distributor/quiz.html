@@ -423,44 +423,8 @@
     </div>
   </section>
 
-  <!-- ============ STEP 8: HOW DID YOU HEAR ABOUT US? ============ -->
+  <!-- ============ STEP 8: CONTACT + CALENDLY ============ -->
   <section class="step" data-step="8">
-    <h1 class="q-question">How did you hear about us?</h1>
-    <p class="q-hint">Helps us understand which channels reach distributors best.</p>
-    <div class="options" id="acquisitionOptions">
-      <button class="opt" data-value="Facebook/Instagram" type="button">
-        <span class="opt-check"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>
-        <span class="opt-body"><span class="opt-label">Instagram / Facebook</span></span>
-      </button>
-      <button class="opt" data-value="Google" type="button">
-        <span class="opt-check"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>
-        <span class="opt-body"><span class="opt-label">Google search</span></span>
-      </button>
-      <button class="opt" data-value="LinkedIn" type="button">
-        <span class="opt-check"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>
-        <span class="opt-body"><span class="opt-label">LinkedIn</span></span>
-      </button>
-      <button class="opt" data-value="YouTube" type="button">
-        <span class="opt-check"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>
-        <span class="opt-body"><span class="opt-label">YouTube</span></span>
-      </button>
-      <button class="opt" data-value="Bouche à oreille" type="button">
-        <span class="opt-check"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>
-        <span class="opt-body"><span class="opt-label">Referral (friend / partner)</span></span>
-      </button>
-      <button class="opt" data-value="Trade show" type="button">
-        <span class="opt-check"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>
-        <span class="opt-body"><span class="opt-label">Trade show / event</span></span>
-      </button>
-      <button class="opt" data-value="Autre" type="button" style="grid-column:span 2">
-        <span class="opt-check"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>
-        <span class="opt-body"><span class="opt-label">Other</span></span>
-      </button>
-    </div>
-  </section>
-
-  <!-- ============ STEP 9: CONTACT + CALENDLY ============ -->
-  <section class="step" data-step="9">
     <div id="contactForm">
       <h1 class="q-question">One last step — how do we reach you?</h1>
       <p class="q-hint">We&rsquo;ll send your application and open the booking calendar for a 20-min intro call.</p>
@@ -605,7 +569,7 @@ var COUNTRIES = [
  * State — persisted to localStorage.
  * ===================================================================== */
 var STORAGE_KEY = 'pmd_answers_v1';
-var TOTAL_STEPS = 9;
+var TOTAL_STEPS = 8;
 
 var state = {
   countries: [],
@@ -616,7 +580,6 @@ var state = {
   volume_accessories: null,
   annual_revenue: null,
   timeline: null,
-  acquisition_channel: null,
   first_name: '',
   last_name: '',
   email: '',
@@ -687,8 +650,7 @@ function canProceed(step) {
       return !!state.volume_machines && !!state.volume_accessories;
     case 6: return !!state.annual_revenue;
     case 7: return !!state.timeline;
-    case 8: return !!state.acquisition_channel;
-    case 9: return validateContactForm(false);
+    case 8: return validateContactForm(false);
     default: return false;
   }
 }
@@ -976,7 +938,6 @@ bindSingleSelect('productInterestOptions', 'product_interest');
 bindSingleSelect('businessModelOptions', 'business_model');
 bindSingleSelect('revenueOptions', 'annual_revenue');
 bindSingleSelect('timelineOptions', 'timeline');
-bindSingleSelect('acquisitionOptions', 'acquisition_channel');
 bindContactFields();
 syncVolumeStep();
 syncDropshipEligibility();
