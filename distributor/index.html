@@ -37,7 +37,6 @@
     display:flex;justify-content:center;flex-wrap:wrap;gap:14px;
   }
   .continents span{white-space:nowrap}
-  .continents .sep{color:#d1d5db;font-weight:400}
   .continents .chk{color:#56BC8E;font-weight:800;margin-right:5px}
   .subtitle{font-size:16px;font-weight:600;color:#111;margin-bottom:26px;line-height:1.45}
   ul.bullets{list-style:none;text-align:left;margin-bottom:26px;display:inline-block}
@@ -63,49 +62,79 @@
     background:url('https://cdn.shopify.com/s/files/1/0901/2091/3269/files/Quel_reformer_pour_votre_Studio_Pilates_5.jpg?v=1787141289') center center / cover no-repeat;
   }
 
-  .mobile-hero{display:none}
+  /* ============= MOBILE HEADER (hidden on desktop) ============= */
+  .mobile-header{
+    display:none;align-items:center;justify-content:center;
+    padding:14px 18px;background:#fff;
+  }
+  .mobile-header .brand-logo{height:30px}
+
+  /* ============= MOBILE ============= */
   @media (max-width: 900px){
-    .stage{grid-template-columns:1fr}
-    .right{display:none}
-    .mobile-hero{
-      display:block;height:220px;
-      background:url('https://cdn.shopify.com/s/files/1/0901/2091/3269/files/Quel_reformer_pour_votre_Studio_Pilates_5.jpg?v=1787141289') center center / cover no-repeat;
+    .stage{grid-template-columns:1fr;min-height:auto}
+    .left{padding:0;background:#f8f8f8}
+
+    /* Desktop logo masqué, remplacé par .mobile-header en haut */
+    .left > .brand{display:none}
+    .mobile-header{display:flex}
+
+    .right{
+      order:-1;height:52vh;min-height:340px;
     }
-    .left{padding:24px 20px 40px}
+    .left-inner{
+      background:#fff;margin:-64px 16px 0;padding:28px 22px 28px;
+      border-radius:14px;max-width:none;position:relative;z-index:5;
+      box-shadow:0 -4px 20px rgba(0,0,0,.05);
+    }
     h1{font-size:26px}
-    .cta{min-width:100%;padding:14px 24px}
+    .subtitle{font-size:15px;margin-bottom:20px}
+    .continents{font-size:13px;gap:10px;margin-bottom:16px}
+    .badge{margin-bottom:18px;padding:7px 16px;font-size:11px}
+    ul.bullets li{font-size:14px}
+    .cta{
+      display:block;margin:16px 16px 24px;min-width:0;width:calc(100% - 32px);
+      padding:18px;font-size:16px;
+    }
+    .arrow-up{margin:10px 0 0}
+    .meta{margin-top:16px;padding-bottom:24px}
   }
 </style>
 </head>
 <body>
-  <div class="stage">
-    <section class="left">
-      <a href="/distributor" class="brand" aria-label="Pilates&amp;Me">
-        <img class="brand-logo" src="https://cdn.shopify.com/s/files/1/0901/2091/3269/files/Pilates_Me-min.png?v=1748849344" alt="Pilates&amp;Me">
-      </a>
-      <div class="mobile-hero" role="img" aria-label="Pilates Reformer"></div>
-      <div class="left-inner">
-        <span class="badge">DISTRIBUTOR PROGRAM</span>
-        <h1>Pilates Is Growing Fast. Capture the Opportunity in Your Market.</h1>
-        <p class="continents">
-          <span><span class="chk">✓</span>Europe</span>
-          <span><span class="chk">✓</span>Americas</span>
-          <span><span class="chk">✓</span>Africa</span>
-          <span><span class="chk">✓</span>Oceania</span>
-        </p>
-        <p class="subtitle">Tell us about your business in 8 quick questions. We&rsquo;ll book a call to walk you through pricing, logistics and margins.</p>
-        <ul class="bullets">
-          <li>Wholesale &amp; dropship programs available</li>
-          <li>Reformers, mats, balls, rings, bands &amp; more</li>
-          <li>Priority support &amp; direct access to our team</li>
-        </ul>
-        <a href="/distributor/quiz" class="cta">Start the application</a>
-        <div class="arrow-up" aria-hidden="true">↑</div>
-        <div class="meta">Takes ~2 minutes · English</div>
-      </div>
-    </section>
-    <aside class="right" role="img" aria-label="Pilates Reformer showroom"></aside>
-  </div>
-  <script>if(window.pmbTrack)pmbTrack('landing');</script>
+
+<header class="mobile-header">
+  <a class="brand" href="/distributor" aria-label="Pilates&amp;Me">
+    <img class="brand-logo" src="https://cdn.shopify.com/s/files/1/0901/2091/3269/files/Pilates_Me-min.png?v=1748849344" alt="Pilates&amp;Me">
+  </a>
+</header>
+
+<main class="stage">
+  <section class="left">
+    <a href="/distributor" class="brand" aria-label="Pilates&amp;Me">
+      <img class="brand-logo" src="https://cdn.shopify.com/s/files/1/0901/2091/3269/files/Pilates_Me-min.png?v=1748849344" alt="Pilates&amp;Me">
+    </a>
+    <div class="left-inner">
+      <span class="badge">DISTRIBUTOR PROGRAM</span>
+      <h1>Pilates Is Growing Fast. Capture the Opportunity in Your Market.</h1>
+      <p class="continents">
+        <span><span class="chk">✓</span>Europe</span>
+        <span><span class="chk">✓</span>Americas</span>
+        <span><span class="chk">✓</span>Africa</span>
+        <span><span class="chk">✓</span>Oceania</span>
+      </p>
+      <p class="subtitle">Tell us about your business in 8 quick questions. We&rsquo;ll book a call to walk you through pricing, logistics and margins.</p>
+      <ul class="bullets">
+        <li>Wholesale &amp; dropship programs available</li>
+        <li>Reformers, mats, balls, rings, bands &amp; more</li>
+        <li>Priority support &amp; direct access to our team</li>
+      </ul>
+      <a href="/distributor/quiz" class="cta">Start the application</a>
+      <div class="arrow-up" aria-hidden="true">↑</div>
+      <div class="meta">Takes ~2 minutes · English</div>
+    </div>
+  </section>
+  <aside class="right" role="img" aria-label="Pilates Reformer showroom"></aside>
+</main>
+<script>if(window.pmbTrack)pmbTrack('landing');</script>
 </body>
 </html>
