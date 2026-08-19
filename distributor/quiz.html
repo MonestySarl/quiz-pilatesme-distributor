@@ -103,21 +103,32 @@
   .chip button{color:#fff;font-size:14px;padding:0 2px;line-height:1;opacity:.7}
   .chip button:hover{opacity:1}
   .country-list{
-    max-height:340px;overflow-y:auto;border:1px solid #e5e7eb;border-radius:10px;
+    max-height:420px;overflow-y:auto;border:1px solid #e5e7eb;border-radius:10px;
     background:#fff;
   }
+  .continent-group{border-bottom:1px solid #e5e7eb}
+  .continent-group:last-child{border-bottom:0}
+  .continent-header{
+    display:flex;align-items:center;gap:10px;padding:11px 14px;
+    background:#f9fafb;cursor:pointer;font-weight:700;font-size:14px;color:#111;
+    position:sticky;top:0;z-index:2;border-bottom:1px solid #e5e7eb;
+  }
+  .continent-header:hover{background:#f3f4f6}
+  .continent-header input{margin:0;accent-color:#56BC8E;width:18px;height:18px;cursor:pointer}
+  .continent-header .count{margin-left:auto;font-weight:500;font-size:12px;color:#6b7280}
   .country-row{
-    display:flex;align-items:center;gap:10px;padding:10px 14px;
+    display:flex;align-items:center;gap:10px;padding:9px 14px 9px 34px;
     cursor:pointer;font-size:14.5px;border-bottom:1px solid #f3f4f6;
   }
   .country-row:last-child{border-bottom:0}
   .country-row:hover{background:#f9fafb}
   .country-row.selected{background:#f0fdf4}
-  .country-row input{margin:0;accent-color:#56BC8E;width:16px;height:16px}
+  .country-row input{margin:0;accent-color:#56BC8E;width:16px;height:16px;cursor:pointer}
   .country-row .eu-tag{
     margin-left:auto;font-size:10.5px;font-weight:700;color:#0369a1;
     background:#e0f2fe;padding:2px 7px;border-radius:100px;
   }
+  .no-results{padding:20px 14px;text-align:center;color:#6b7280;font-size:13.5px}
 
   /* ===== VOLUME GAUGES ===== */
   .gauge-group{margin-bottom:22px}
@@ -442,13 +453,10 @@
       <div class="check"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></div>
       <h2>Application received.</h2>
       <p>Book a 20-minute intro call with our distributor team.<br>You&rsquo;ll get an email confirmation with the meeting details.</p>
-      <div class="calendly-embed" id="calendlyEmbed">
-        <!-- Calendly embed goes here — placeholder until real link is provided -->
-        <div style="text-align:center">
-          <p style="font-weight:700;color:#111;margin-bottom:8px">Calendly link coming soon.</p>
-          <p style="font-size:13px">Our team will contact you at the email you provided.</p>
-        </div>
+      <div class="calendly-embed" id="calendlyEmbed" style="padding:0">
+        <div class="calendly-inline-widget" data-url="https://calendly.com/pilatesme/distributor?back=1&hide_gdpr_banner=1" style="min-width:100%;height:700px;width:100%;"></div>
       </div>
+      <script src="https://assets.calendly.com/assets/external/widget.js" async></script>
     </div>
   </section>
 </main>
@@ -461,49 +469,84 @@
 
 <script>
 /* =====================================================================
- * Country data — ISO 3166-1 alpha-2 + EU/EEA flag for dropship eligibility.
+ * Continent data + country list — grouped, ISO 3166-1 alpha-2.
+ * Format: [code, name, continent, isEuDropshipEligible]
+ * Continent codes: eur=Europe, ame=Americas, afr=Africa, asi=Asia, oce=Oceania
  * ===================================================================== */
+var CONTINENTS = [
+  { code: 'eur', name: 'Europe' },
+  { code: 'ame', name: 'Americas' },
+  { code: 'afr', name: 'Africa' },
+  { code: 'asi', name: 'Asia' },
+  { code: 'oce', name: 'Oceania' }
+];
+
 var COUNTRIES = [
-  ['AF','Afghanistan',false],['AL','Albania',false],['DZ','Algeria',false],['AD','Andorra',false],
-  ['AO','Angola',false],['AR','Argentina',false],['AM','Armenia',false],['AU','Australia',false],
-  ['AT','Austria',true],['AZ','Azerbaijan',false],['BH','Bahrain',false],['BD','Bangladesh',false],
-  ['BY','Belarus',false],['BE','Belgium',true],['BJ','Benin',false],['BT','Bhutan',false],
-  ['BO','Bolivia',false],['BA','Bosnia and Herzegovina',false],['BW','Botswana',false],['BR','Brazil',false],
-  ['BN','Brunei',false],['BG','Bulgaria',true],['BF','Burkina Faso',false],['BI','Burundi',false],
-  ['KH','Cambodia',false],['CM','Cameroon',false],['CA','Canada',false],['CV','Cape Verde',false],
-  ['CF','Central African Republic',false],['TD','Chad',false],['CL','Chile',false],['CN','China',false],
-  ['CO','Colombia',false],['CG','Congo',false],['CD','Congo (DRC)',false],['CR','Costa Rica',false],
-  ['HR','Croatia',true],['CU','Cuba',false],['CY','Cyprus',true],['CZ','Czech Republic',true],
-  ['DK','Denmark',true],['DJ','Djibouti',false],['DO','Dominican Republic',false],['EC','Ecuador',false],
-  ['EG','Egypt',false],['SV','El Salvador',false],['EE','Estonia',true],['ET','Ethiopia',false],
-  ['FJ','Fiji',false],['FI','Finland',true],['FR','France',true],['GA','Gabon',false],
-  ['GM','Gambia',false],['GE','Georgia',false],['DE','Germany',true],['GH','Ghana',false],
-  ['GR','Greece',true],['GT','Guatemala',false],['GN','Guinea',false],['HN','Honduras',false],
-  ['HK','Hong Kong',false],['HU','Hungary',true],['IS','Iceland',true],['IN','India',false],
-  ['ID','Indonesia',false],['IR','Iran',false],['IQ','Iraq',false],['IE','Ireland',true],
-  ['IL','Israel',false],['IT','Italy',true],['CI','Ivory Coast',false],['JM','Jamaica',false],
-  ['JP','Japan',false],['JO','Jordan',false],['KZ','Kazakhstan',false],['KE','Kenya',false],
-  ['KW','Kuwait',false],['KG','Kyrgyzstan',false],['LA','Laos',false],['LV','Latvia',true],
-  ['LB','Lebanon',false],['LS','Lesotho',false],['LR','Liberia',false],['LY','Libya',false],
-  ['LI','Liechtenstein',true],['LT','Lithuania',true],['LU','Luxembourg',true],['MO','Macau',false],
-  ['MG','Madagascar',false],['MW','Malawi',false],['MY','Malaysia',false],['MV','Maldives',false],
-  ['ML','Mali',false],['MT','Malta',true],['MR','Mauritania',false],['MU','Mauritius',false],
-  ['MX','Mexico',false],['MD','Moldova',false],['MC','Monaco',true],['MN','Mongolia',false],
-  ['ME','Montenegro',false],['MA','Morocco',false],['MZ','Mozambique',false],['MM','Myanmar',false],
-  ['NA','Namibia',false],['NP','Nepal',false],['NL','Netherlands',true],['NZ','New Zealand',false],
-  ['NI','Nicaragua',false],['NE','Niger',false],['NG','Nigeria',false],['MK','North Macedonia',false],
-  ['NO','Norway',true],['OM','Oman',false],['PK','Pakistan',false],['PA','Panama',false],
-  ['PG','Papua New Guinea',false],['PY','Paraguay',false],['PE','Peru',false],['PH','Philippines',false],
-  ['PL','Poland',true],['PT','Portugal',true],['QA','Qatar',false],['RO','Romania',true],
-  ['RU','Russia',false],['RW','Rwanda',false],['SA','Saudi Arabia',false],['SN','Senegal',false],
-  ['RS','Serbia',false],['SG','Singapore',false],['SK','Slovakia',true],['SI','Slovenia',true],
-  ['SO','Somalia',false],['ZA','South Africa',false],['KR','South Korea',false],['ES','Spain',true],
-  ['LK','Sri Lanka',false],['SD','Sudan',false],['SE','Sweden',true],['CH','Switzerland',true],
-  ['SY','Syria',false],['TW','Taiwan',false],['TJ','Tajikistan',false],['TZ','Tanzania',false],
-  ['TH','Thailand',false],['TG','Togo',false],['TN','Tunisia',false],['TR','Türkiye',false],
-  ['TM','Turkmenistan',false],['UG','Uganda',false],['UA','Ukraine',false],['AE','United Arab Emirates',false],
-  ['GB','United Kingdom',false],['US','United States',false],['UY','Uruguay',false],['UZ','Uzbekistan',false],
-  ['VE','Venezuela',false],['VN','Vietnam',false],['YE','Yemen',false],['ZM','Zambia',false],['ZW','Zimbabwe',false]
+  // ===== Europe =====
+  ['AL','Albania','eur',false],['AD','Andorra','eur',false],['AT','Austria','eur',true],
+  ['BY','Belarus','eur',false],['BE','Belgium','eur',true],['BA','Bosnia and Herzegovina','eur',false],
+  ['BG','Bulgaria','eur',true],['HR','Croatia','eur',true],['CY','Cyprus','eur',true],
+  ['CZ','Czech Republic','eur',true],['DK','Denmark','eur',true],['EE','Estonia','eur',true],
+  ['FI','Finland','eur',true],['FR','France','eur',true],['DE','Germany','eur',true],
+  ['GR','Greece','eur',true],['HU','Hungary','eur',true],['IS','Iceland','eur',true],
+  ['IE','Ireland','eur',true],['IT','Italy','eur',true],['LV','Latvia','eur',true],
+  ['LI','Liechtenstein','eur',true],['LT','Lithuania','eur',true],['LU','Luxembourg','eur',true],
+  ['MT','Malta','eur',true],['MD','Moldova','eur',false],['MC','Monaco','eur',true],
+  ['ME','Montenegro','eur',false],['NL','Netherlands','eur',true],['MK','North Macedonia','eur',false],
+  ['NO','Norway','eur',true],['PL','Poland','eur',true],['PT','Portugal','eur',true],
+  ['RO','Romania','eur',true],['RU','Russia','eur',false],['RS','Serbia','eur',false],
+  ['SK','Slovakia','eur',true],['SI','Slovenia','eur',true],['ES','Spain','eur',true],
+  ['SE','Sweden','eur',true],['CH','Switzerland','eur',true],['UA','Ukraine','eur',false],
+  ['GB','United Kingdom','eur',false],
+
+  // ===== Americas =====
+  ['AR','Argentina','ame',false],['BO','Bolivia','ame',false],['BR','Brazil','ame',false],
+  ['CA','Canada','ame',false],['CL','Chile','ame',false],['CO','Colombia','ame',false],
+  ['CR','Costa Rica','ame',false],['CU','Cuba','ame',false],['DO','Dominican Republic','ame',false],
+  ['EC','Ecuador','ame',false],['SV','El Salvador','ame',false],['GT','Guatemala','ame',false],
+  ['HN','Honduras','ame',false],['JM','Jamaica','ame',false],['MX','Mexico','ame',false],
+  ['NI','Nicaragua','ame',false],['PA','Panama','ame',false],['PY','Paraguay','ame',false],
+  ['PE','Peru','ame',false],['US','United States','ame',false],['UY','Uruguay','ame',false],
+  ['VE','Venezuela','ame',false],
+
+  // ===== Africa =====
+  ['DZ','Algeria','afr',false],['AO','Angola','afr',false],['BJ','Benin','afr',false],
+  ['BW','Botswana','afr',false],['BF','Burkina Faso','afr',false],['BI','Burundi','afr',false],
+  ['CM','Cameroon','afr',false],['CV','Cape Verde','afr',false],['CF','Central African Republic','afr',false],
+  ['TD','Chad','afr',false],['CG','Congo','afr',false],['CD','Congo (DRC)','afr',false],
+  ['CI','Ivory Coast','afr',false],['DJ','Djibouti','afr',false],['EG','Egypt','afr',false],
+  ['ET','Ethiopia','afr',false],['GA','Gabon','afr',false],['GM','Gambia','afr',false],
+  ['GH','Ghana','afr',false],['GN','Guinea','afr',false],['KE','Kenya','afr',false],
+  ['LS','Lesotho','afr',false],['LR','Liberia','afr',false],['LY','Libya','afr',false],
+  ['MG','Madagascar','afr',false],['MW','Malawi','afr',false],['ML','Mali','afr',false],
+  ['MR','Mauritania','afr',false],['MU','Mauritius','afr',false],['MA','Morocco','afr',false],
+  ['MZ','Mozambique','afr',false],['NA','Namibia','afr',false],['NE','Niger','afr',false],
+  ['NG','Nigeria','afr',false],['RW','Rwanda','afr',false],['SN','Senegal','afr',false],
+  ['SO','Somalia','afr',false],['ZA','South Africa','afr',false],['SD','Sudan','afr',false],
+  ['TZ','Tanzania','afr',false],['TG','Togo','afr',false],['TN','Tunisia','afr',false],
+  ['UG','Uganda','afr',false],['ZM','Zambia','afr',false],['ZW','Zimbabwe','afr',false],
+
+  // ===== Asia =====
+  ['AF','Afghanistan','asi',false],['AM','Armenia','asi',false],['AZ','Azerbaijan','asi',false],
+  ['BH','Bahrain','asi',false],['BD','Bangladesh','asi',false],['BT','Bhutan','asi',false],
+  ['BN','Brunei','asi',false],['KH','Cambodia','asi',false],['CN','China','asi',false],
+  ['GE','Georgia','asi',false],['HK','Hong Kong','asi',false],['IN','India','asi',false],
+  ['ID','Indonesia','asi',false],['IR','Iran','asi',false],['IQ','Iraq','asi',false],
+  ['IL','Israel','asi',false],['JP','Japan','asi',false],['JO','Jordan','asi',false],
+  ['KZ','Kazakhstan','asi',false],['KW','Kuwait','asi',false],['KG','Kyrgyzstan','asi',false],
+  ['LA','Laos','asi',false],['LB','Lebanon','asi',false],['MO','Macau','asi',false],
+  ['MY','Malaysia','asi',false],['MV','Maldives','asi',false],['MN','Mongolia','asi',false],
+  ['MM','Myanmar','asi',false],['NP','Nepal','asi',false],['OM','Oman','asi',false],
+  ['PK','Pakistan','asi',false],['PH','Philippines','asi',false],['QA','Qatar','asi',false],
+  ['SA','Saudi Arabia','asi',false],['SG','Singapore','asi',false],['KR','South Korea','asi',false],
+  ['LK','Sri Lanka','asi',false],['SY','Syria','asi',false],['TW','Taiwan','asi',false],
+  ['TJ','Tajikistan','asi',false],['TH','Thailand','asi',false],['TR','Türkiye','asi',false],
+  ['TM','Turkmenistan','asi',false],['AE','United Arab Emirates','asi',false],
+  ['UZ','Uzbekistan','asi',false],['VN','Vietnam','asi',false],['YE','Yemen','asi',false],
+
+  // ===== Oceania =====
+  ['AU','Australia','oce',false],['FJ','Fiji','oce',false],['NZ','New Zealand','oce',false],
+  ['PG','Papua New Guinea','oce',false]
 ];
 
 /* =====================================================================
@@ -609,32 +652,92 @@ function renderCountryList(filter) {
   var list = document.getElementById('countryList');
   var f = (filter || '').trim().toLowerCase();
   var html = '';
-  COUNTRIES
-    .filter(function (c) { return !f || c[1].toLowerCase().indexOf(f) !== -1; })
-    .forEach(function (c) {
+  var anyShown = false;
+
+  CONTINENTS.forEach(function (cont) {
+    var all = COUNTRIES.filter(function (c) { return c[2] === cont.code; });
+    // Match rule: if filter matches continent name → show all countries in it;
+    // otherwise filter countries by name.
+    var contMatches = !f || cont.name.toLowerCase().indexOf(f) !== -1;
+    var shown = contMatches ? all : all.filter(function (c) { return c[1].toLowerCase().indexOf(f) !== -1; });
+    if (shown.length === 0) return;
+    anyShown = true;
+
+    var selCount = shown.reduce(function (n, c) { return n + (state.countries.indexOf(c[0]) !== -1 ? 1 : 0); }, 0);
+    var allSel = selCount === shown.length;
+    var noneSel = selCount === 0;
+
+    html += '<div class="continent-group" data-continent="' + cont.code + '">' +
+      '<label class="continent-header" data-cont="' + cont.code + '">' +
+        '<input type="checkbox" class="cont-check"' + (allSel ? ' checked' : '') + '>' +
+        '<span>' + cont.name + '</span>' +
+        '<span class="count">' + selCount + ' / ' + shown.length + '</span>' +
+      '</label>';
+
+    shown.forEach(function (c) {
       var sel = state.countries.indexOf(c[0]) !== -1;
       html += '<label class="country-row' + (sel ? ' selected' : '') + '" data-code="' + c[0] + '">' +
         '<input type="checkbox"' + (sel ? ' checked' : '') + '>' +
         '<span>' + c[1] + '</span>' +
-        (c[2] ? '<span class="eu-tag">EU</span>' : '') +
+        (c[3] ? '<span class="eu-tag">EU</span>' : '') +
         '</label>';
     });
+    html += '</div>';
+  });
+
+  if (!anyShown) html = '<div class="no-results">No country matches your search.</div>';
   list.innerHTML = html;
+
+  // Set indeterminate state on partially-selected continents
+  list.querySelectorAll('.continent-header').forEach(function (h) {
+    var cont = h.dataset.cont;
+    var codes = COUNTRIES.filter(function (c) { return c[2] === cont; }).map(function (c) { return c[0]; });
+    var visibleRows = h.parentElement.querySelectorAll('.country-row');
+    var visibleCodes = Array.prototype.map.call(visibleRows, function (r) { return r.dataset.code; });
+    var selVisible = visibleCodes.filter(function (code) { return state.countries.indexOf(code) !== -1; }).length;
+    var input = h.querySelector('.cont-check');
+    input.indeterminate = selVisible > 0 && selVisible < visibleCodes.length;
+    input.checked = selVisible === visibleCodes.length && visibleCodes.length > 0;
+  });
+
+  // Country row clicks
   list.querySelectorAll('.country-row').forEach(function (row) {
     row.addEventListener('click', function (e) {
       e.preventDefault();
-      var code = row.dataset.code;
-      var i = state.countries.indexOf(code);
-      if (i === -1) state.countries.push(code);
-      else state.countries.splice(i, 1);
-      row.classList.toggle('selected');
-      row.querySelector('input').checked = row.classList.contains('selected');
+      toggleCountry(row.dataset.code);
+    });
+  });
+
+  // Continent header clicks (bulk toggle over VISIBLE countries in the group)
+  list.querySelectorAll('.continent-header').forEach(function (h) {
+    h.addEventListener('click', function (e) {
+      e.preventDefault();
+      var visibleRows = h.parentElement.querySelectorAll('.country-row');
+      var codes = Array.prototype.map.call(visibleRows, function (r) { return r.dataset.code; });
+      var allSel = codes.every(function (code) { return state.countries.indexOf(code) !== -1; });
+      if (allSel) {
+        state.countries = state.countries.filter(function (code) { return codes.indexOf(code) === -1; });
+      } else {
+        codes.forEach(function (code) { if (state.countries.indexOf(code) === -1) state.countries.push(code); });
+      }
+      renderCountryList(document.getElementById('countrySearch').value);
       renderCountryChips();
       saveState();
       updateNextButton();
     });
   });
 }
+
+function toggleCountry(code) {
+  var i = state.countries.indexOf(code);
+  if (i === -1) state.countries.push(code);
+  else state.countries.splice(i, 1);
+  renderCountryList(document.getElementById('countrySearch').value);
+  renderCountryChips();
+  saveState();
+  updateNextButton();
+}
+
 function renderCountryChips() {
   var chips = document.getElementById('countryChips');
   chips.innerHTML = state.countries.map(function (code) {
@@ -643,13 +746,7 @@ function renderCountryChips() {
   }).join('');
   chips.querySelectorAll('button[data-remove]').forEach(function (b) {
     b.addEventListener('click', function () {
-      var code = b.dataset.remove;
-      var i = state.countries.indexOf(code);
-      if (i !== -1) state.countries.splice(i, 1);
-      renderCountryChips();
-      renderCountryList(document.getElementById('countrySearch').value);
-      saveState();
-      updateNextButton();
+      toggleCountry(b.dataset.remove);
     });
   });
 }
