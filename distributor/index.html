@@ -61,6 +61,7 @@
     position:relative;background-color:#e5e5e5;
     background:url('https://cdn.shopify.com/s/files/1/0901/2091/3269/files/Quel_reformer_pour_votre_Studio_Pilates_5.jpg?v=1787141289') center center / cover no-repeat;
   }
+  .right-mobile-img{display:none}
 
   /* ============= SOCIAL PROOF SLIDER ============= */
   .social-proof{
@@ -132,7 +133,10 @@
     .mobile-header{display:flex}
 
     .right{
-      order:-1;height:52vh;min-height:340px;
+      order:-1;height:auto;min-height:0;background:#f8f8f8 !important;
+    }
+    .right-mobile-img{
+      display:block;width:100%;height:auto;object-fit:contain;
     }
     .left-inner{
       background:#fff;margin:-64px 16px 0;padding:28px 22px 28px;
@@ -186,7 +190,9 @@
       <div class="meta">Takes ~2 minutes · English</div>
     </div>
   </section>
-  <aside class="right" role="img" aria-label="Pilates Reformer showroom"></aside>
+  <aside class="right" role="img" aria-label="Pilates Reformer showroom">
+    <img class="right-mobile-img" src="https://cdn.shopify.com/s/files/1/0901/2091/3269/files/Quel_reformer_pour_votre_Studio_Pilates_5.jpg?v=1787141289" alt="Pilates Reformer showroom">
+  </aside>
 </main>
 
 <section class="social-proof" id="socialProof" aria-labelledby="studios-title">
