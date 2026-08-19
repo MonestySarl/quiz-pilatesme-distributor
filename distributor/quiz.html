@@ -893,14 +893,35 @@ function validateContactForm(showErrors) {
   });
   return ok;
 }
+var SUBMIT_URL = 'https://coiizesawqbutfryausx.supabase.co/functions/v1/distributor-submit';
+
 function submitForm() {
   if (!validateContactForm(true)) return;
+  // Show success UI immediately — don't block user from booking Calendly if network is slow
   document.getElementById('contactForm').hidden = true;
   document.getElementById('successBlock').hidden = false;
   document.getElementById('nextBtn').style.display = 'none';
   if (window.pmbTrack) pmbTrack('quote_submitted', { value: state.product_interest || '' });
-  // TODO Phase 2 : POST to Supabase edge fn `distributor-submit`
-  console.log('[distributor-quiz] submit payload:', Object.assign({ visitor_id: window.pmbVisitorId }, state));
+
+  var payload = Object.assign({}, state, {
+    visitor_id: window.pmbVisitorId || null,
+    landing_page: window.location.href,
+    referrer: document.referrer || null
+  });
+
+  fetch(SUBMIT_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+    credentials: 'omit',
+    mode: 'cors',
+    keepalive: true
+  }).then(function (r) {
+    if (!r.ok) console.warn('[distributor-quiz] submit HTTP', r.status);
+    else try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+  }).catch(function (e) {
+    console.warn('[distributor-quiz] submit error', e);
+  });
 }
 
 /* =====================================================================
