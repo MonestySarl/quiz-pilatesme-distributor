@@ -62,6 +62,59 @@
     background:url('https://cdn.shopify.com/s/files/1/0901/2091/3269/files/Quel_reformer_pour_votre_Studio_Pilates_5.jpg?v=1787141289') center center / cover no-repeat;
   }
 
+  /* ============= SOCIAL PROOF SLIDER ============= */
+  .social-proof{
+    background:#faf8f2;padding:36px 16px 44px;text-align:center;overflow:hidden;
+  }
+  .social-proof h2{
+    font-size:17px;font-weight:700;line-height:1.35;color:#8a8360;
+    max-width:820px;margin:0 auto 8px;letter-spacing:-.005em;padding:0 8px;
+  }
+  .social-proof p{
+    font-size:12.5px;color:#8a8360;opacity:.85;margin-bottom:24px;
+  }
+  .studios-viewport{
+    position:relative;
+    overflow-x:auto;overflow-y:hidden;
+    -webkit-overflow-scrolling:touch;
+    scroll-snap-type:x mandatory;
+    scroll-padding-inline:16px;padding:0 16px;
+    scrollbar-width:none;
+  }
+  .studios-viewport::-webkit-scrollbar{display:none}
+  .studios-track{display:flex;gap:14px;width:max-content}
+  .studio-card{
+    flex:0 0 220px;height:220px;border-radius:14px;overflow:hidden;
+    background:#f0ece0;box-shadow:0 2px 10px rgba(0,0,0,.06);
+    scroll-snap-align:start;
+  }
+  .studio-card img{width:100%;height:100%;object-fit:cover;display:block}
+
+  @media (min-width: 901px){
+    .studios-viewport{
+      overflow:hidden;padding:0;scroll-snap-type:none;
+      -webkit-mask-image:linear-gradient(to right,transparent,black 4%,black 96%,transparent);
+              mask-image:linear-gradient(to right,transparent,black 4%,black 96%,transparent);
+    }
+    .studios-track{animation:studioScroll 50s linear infinite;will-change:transform}
+    .studios-viewport:hover .studios-track{animation-play-state:paused}
+    .left .social-proof{
+      background:transparent;padding:24px 0 0;text-align:center;
+      width:100%;max-width:520px;margin:0 auto;
+    }
+    .left .social-proof h2{font-size:14px;color:#8a8360;margin-bottom:4px;padding:0}
+    .left .social-proof p{font-size:12px;margin-bottom:16px}
+    .left .social-proof .studio-card{flex:0 0 170px;height:170px}
+    .left .social-proof .studios-track{gap:12px}
+  }
+  @keyframes studioScroll{
+    from{transform:translate3d(0,0,0)}
+    to{transform:translate3d(-50%,0,0)}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .studios-track{animation:none;transform:none}
+  }
+
   /* ============= MOBILE HEADER (hidden on desktop) ============= */
   .mobile-header{
     display:none;align-items:center;justify-content:center;
@@ -135,6 +188,60 @@
   </section>
   <aside class="right" role="img" aria-label="Pilates Reformer showroom"></aside>
 </main>
+
+<section class="social-proof" id="socialProof" aria-labelledby="studios-title">
+  <h2 id="studios-title">Trusted worldwide — from home studios to franchise chains.</h2>
+  <p>1,000+ customers, private and professional, delivered this year.</p>
+  <div class="studios-viewport">
+    <div class="studios-track" id="studiosTrack" aria-hidden="true"></div>
+  </div>
+</section>
+
+<script>
+  (function () {
+    var STUDIOS = [
+      'https://pilatesme-deutschland.com/cdn/shop/files/pilates-reformer-bienetre-osante-pechbonnieu.jpg?v=1762435376&width=440',
+      'https://pilatesme-deutschland.com/cdn/shop/files/ALMALOU-10_1.jpg?v=1775665691&width=440',
+      'https://pilatesme-deutschland.com/cdn/shop/files/2025-09-30.webp?v=1762439317&width=440',
+      'https://pilatesme-deutschland.com/cdn/shop/files/unnamed_2.webp?v=1762442054&width=440',
+      'https://pilatesme-deutschland.com/cdn/shop/files/2025-09-30_2.webp?v=1762439291&width=440',
+      'https://pilatesme-deutschland.com/cdn/shop/files/2025-09-30_1.webp?v=1762439306&width=440',
+      'https://pilatesme-deutschland.com/cdn/shop/files/images_3ef1408f-d49a-4b7b-9009-d65ad1c43d8c.jpg?v=1762435021&width=440',
+      'https://pilatesme-deutschland.com/cdn/shop/files/PHOTO-2025-11-06-15-54-14-min.jpg?v=1762442372&width=440'
+    ];
+    var track = document.getElementById('studiosTrack');
+    if (!track) return;
+    function card(url, i) {
+      var eager = i < 3;
+      return '<div class="studio-card">'
+        + '<img src="' + url + '" alt=""'
+        + ' width="440" height="440"'
+        + ' decoding="async"'
+        + (eager ? ' loading="eager" fetchpriority="high"' : ' loading="lazy"')
+        + '></div>';
+    }
+    var html = STUDIOS.map(card).join('');
+    track.innerHTML = html + html;
+
+    // Responsive placement — desktop: inside .left below .left-inner ; mobile: after .stage
+    var slider = document.getElementById('socialProof');
+    var leftPane = document.querySelector('.left');
+    var leftInner = document.querySelector('.left-inner');
+    var stage = document.querySelector('.stage');
+    var mq = window.matchMedia('(min-width: 901px)');
+    function placeSlider(){
+      if (!slider || !leftPane || !leftInner || !stage) return;
+      if (mq.matches){
+        if (slider.parentNode !== leftPane) leftPane.appendChild(slider);
+      } else {
+        if (slider.parentNode !== document.body) document.body.insertBefore(slider, stage.nextSibling);
+      }
+    }
+    placeSlider();
+    mq.addEventListener ? mq.addEventListener('change', placeSlider) : mq.addListener(placeSlider);
+  })();
+</script>
+
 <script>if(window.pmbTrack)pmbTrack('landing');</script>
 </body>
 </html>
