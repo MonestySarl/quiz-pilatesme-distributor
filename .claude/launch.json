@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "distributor-quiz",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "4577"],
+      "port": 4577,
+      "url": "http://localhost:4577/distributor"
+    }
+  ]
+}

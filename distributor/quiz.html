@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Distributor application — Pilates&amp;Me</title>
+<link rel="icon" href="https://cdn.shopify.com/s/files/1/0901/2091/3269/files/Favicon_Pilates_Me.png">
+<script src="/assets/pmb-tracker.js" defer></script>
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',sans-serif;
+    color:#111;background:#fff;min-height:100vh;
+  }
+  button{font-family:inherit;cursor:pointer;border:0;background:none}
+  input,textarea,select{font-family:inherit;font-size:inherit;color:inherit}
+
+  /* ===== HEADER ===== */
+  .q-header{
+    display:grid;grid-template-columns:1fr auto 1fr;align-items:center;
+    padding:22px 44px;background:#f7f7f8;
+  }
+  .q-header .brand-logo{height:34px;display:block}
+  .q-header .q-title{font-weight:600;font-size:15px;color:#111;text-align:center}
+  .q-header .close{
+    justify-self:end;display:inline-flex;align-items:center;gap:8px;
+    font-size:14px;color:#111;padding:6px 10px;border-radius:6px;
+    transition:background .15s;font-weight:500;text-decoration:none;
+  }
+  .q-header .close:hover{background:#ececee}
+  .q-header .close svg{width:14px;height:14px;stroke-width:2.2}
+
+  .q-progress-wrap{padding:14px 44px 4px;background:#f7f7f8}
+  .q-progress-track{height:4px;background:#e5e7eb;border-radius:2px;overflow:hidden}
+  .q-progress-bar{height:100%;background:#56BC8E;border-radius:2px;transition:width .4s ease}
+
+  .q-toolbar{padding:20px 44px 0;display:flex;align-items:center;justify-content:space-between;background:#f7f7f8}
+  .q-back{
+    display:inline-flex;align-items:center;gap:6px;background:none;border:none;
+    font-weight:700;font-size:15px;color:#111;cursor:pointer;
+    padding:6px 10px;border-radius:6px;transition:background .15s;
+  }
+  .q-back:hover{background:#ececee}
+  .q-back svg{width:16px;height:16px;stroke-width:2.5}
+  .q-back[hidden]{display:none}
+  .q-step-indicator{font-size:13px;color:#6b7280;font-weight:500}
+
+  /* ===== STAGE ===== */
+  .stage{
+    max-width:820px;margin:0 auto;padding:32px 44px 120px;
+  }
+  .step{display:none}
+  .step.active{display:block;animation:fadeIn .25s ease}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+  h1.q-question{
+    font-size:28px;line-height:1.2;font-weight:800;letter-spacing:-.01em;
+    margin-bottom:8px;color:#111;
+  }
+  p.q-hint{font-size:14.5px;color:#6b7280;margin-bottom:24px;line-height:1.5}
+
+  /* ===== OPTION CARDS ===== */
+  .options{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .options.single-col{grid-template-columns:1fr}
+  .opt{
+    display:flex;align-items:center;gap:12px;
+    padding:16px 18px;border:1.5px solid #e5e7eb;border-radius:12px;
+    background:#fff;cursor:pointer;transition:all .15s;
+    text-align:left;font-size:15px;font-weight:600;color:#111;
+  }
+  .opt:hover{border-color:#111}
+  .opt.selected{border-color:#111;background:#f9fafb}
+  .opt.disabled{opacity:.4;cursor:not-allowed;pointer-events:none}
+  .opt-check{
+    flex-shrink:0;width:22px;height:22px;border-radius:6px;
+    border:1.5px solid #d1d5db;display:inline-flex;align-items:center;justify-content:center;
+    background:#fff;transition:all .15s;
+  }
+  .opt.selected .opt-check{background:#56BC8E;border-color:#56BC8E}
+  .opt.selected .opt-check svg{stroke:#fff}
+  .opt-check svg{width:14px;height:14px;stroke:transparent;stroke-width:3;fill:none}
+  .opt-body{flex:1;min-width:0}
+  .opt-label{display:block;font-weight:700;font-size:15px;line-height:1.35}
+  .opt-sub{display:block;font-weight:500;font-size:13px;color:#6b7280;margin-top:3px;line-height:1.4}
+  .opt-badge{
+    display:inline-block;padding:3px 8px;border-radius:6px;
+    background:#fef3c7;color:#92400e;font-size:11px;font-weight:700;margin-left:8px;
+  }
+
+  /* ===== COUNTRY PICKER ===== */
+  .country-search{
+    width:100%;padding:12px 14px;border:1.5px solid #e5e7eb;border-radius:10px;
+    font-size:15px;margin-bottom:12px;background:#fff;
+  }
+  .country-search:focus{outline:none;border-color:#111}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;min-height:32px}
+  .chip{
+    display:inline-flex;align-items:center;gap:6px;padding:6px 10px;
+    background:#111;color:#fff;border-radius:100px;font-size:12.5px;font-weight:600;
+  }
+  .chip button{color:#fff;font-size:14px;padding:0 2px;line-height:1;opacity:.7}
+  .chip button:hover{opacity:1}
+  .country-list{
+    max-height:340px;overflow-y:auto;border:1px solid #e5e7eb;border-radius:10px;
+    background:#fff;
+  }
+  .country-row{
+    display:flex;align-items:center;gap:10px;padding:10px 14px;
+    cursor:pointer;font-size:14.5px;border-bottom:1px solid #f3f4f6;
+  }
+  .country-row:last-child{border-bottom:0}
+  .country-row:hover{background:#f9fafb}
+  .country-row.selected{background:#f0fdf4}
+  .country-row input{margin:0;accent-color:#56BC8E;width:16px;height:16px}
+  .country-row .eu-tag{
+    margin-left:auto;font-size:10.5px;font-weight:700;color:#0369a1;
+    background:#e0f2fe;padding:2px 7px;border-radius:100px;
+  }
+
+  /* ===== VOLUME GAUGES ===== */
+  .gauge-group{margin-bottom:22px}
+  .gauge-label{font-size:14px;font-weight:700;color:#111;margin-bottom:10px}
+  .gauge-buttons{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+  .gauge-btn{
+    padding:14px 8px;border:1.5px solid #e5e7eb;border-radius:10px;background:#fff;
+    font-weight:700;font-size:14.5px;cursor:pointer;transition:all .15s;color:#111;
+  }
+  .gauge-btn:hover{border-color:#111}
+  .gauge-btn.selected{background:#111;color:#fff;border-color:#111}
+
+  /* ===== FORM ===== */
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+  .form-grid.full{grid-template-columns:1fr}
+  .field label{display:block;font-size:13px;font-weight:600;color:#374151;margin-bottom:6px}
+  .field input{
+    width:100%;padding:11px 13px;border:1.5px solid #e5e7eb;border-radius:10px;
+    font-size:14.5px;background:#fff;
+  }
+  .field input:focus{outline:none;border-color:#111}
+  .field input.err{border-color:#dc2626}
+  .field .err-msg{font-size:12px;color:#dc2626;margin-top:4px;display:none}
+  .field.err .err-msg{display:block}
+
+  /* ===== CTA ===== */
+  .cta-row{position:fixed;bottom:0;left:0;right:0;padding:16px 44px;background:#fff;border-top:1px solid #e5e7eb;z-index:10}
+  .cta-row-inner{max-width:820px;margin:0 auto;display:flex;justify-content:flex-end;gap:10px}
+  .cta-next{
+    padding:14px 32px;background:#111;color:#fff;border-radius:8px;
+    font-weight:700;font-size:15px;min-width:180px;
+    transition:transform .12s,background .15s,opacity .15s;
+  }
+  .cta-next:hover:not(:disabled){background:#000;transform:translateY(-1px)}
+  .cta-next:disabled{opacity:.35;cursor:not-allowed}
+
+  /* ===== FINAL / CALENDLY ===== */
+  .success{text-align:center;padding:24px 0}
+  .success .check{
+    width:64px;height:64px;border-radius:50%;background:#dcfce7;
+    display:inline-flex;align-items:center;justify-content:center;margin:0 auto 18px;
+  }
+  .success .check svg{width:36px;height:36px;stroke:#16a34a;stroke-width:3;fill:none}
+  .success h2{font-size:26px;font-weight:800;margin-bottom:8px}
+  .success p{font-size:15px;color:#4b5563;margin-bottom:24px;line-height:1.55}
+  .calendly-embed{
+    min-height:660px;background:#f9fafb;border-radius:12px;
+    display:flex;align-items:center;justify-content:center;color:#6b7280;
+    padding:20px;font-size:14px;
+  }
+
+  @media (max-width: 700px){
+    .q-header{padding:16px 20px}
+    .q-progress-wrap{padding:12px 20px 4px}
+    .q-toolbar{padding:16px 20px 0}
+    .stage{padding:22px 20px 130px}
+    .cta-row{padding:14px 20px}
+    .options{grid-template-columns:1fr}
+    .gauge-buttons{grid-template-columns:repeat(3,1fr)}
+    .form-grid{grid-template-columns:1fr}
+    h1.q-question{font-size:22px}
+  }
+</style>
+</head>
+<body>
+
+<header class="q-header">
+  <a href="/distributor" class="brand" aria-label="Pilates&amp;Me">
+    <img class="brand-logo" src="https://cdn.shopify.com/s/files/1/0901/2091/3269/files/Pilates_Me-min.png?v=1748849344" alt="Pilates&amp;Me">
+  </a>
+  <div class="q-title">Distributor application</div>
+  <a href="/distributor" class="close" aria-label="Close">
+    Close
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+  </a>
+</header>
+
+<div class="q-progress-wrap">
+  <div class="q-progress-track"><div class="q-progress-bar" id="progressBar" style="width:12.5%"></div></div>
+</div>
+
+<div class="q-toolbar">
+  <button class="q-back" id="backBtn" type="button" hidden>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+    Back
+  </button>
+  <div class="q-step-indicator" id="stepIndicator">Step 1 of 8</div>
+</div>
+
+<main class="stage">
+
+  <!-- ============ STEP 1: COUNTRY ============ -->
+  <section class="step active" data-step="1">
+    <h1 class="q-question">Which countries do you sell in?</h1>
+    <p class="q-hint">Select every country where you plan to distribute Pilates&amp;Me products. Countries marked <strong>EU</strong> can access our dropshipping program.</p>
+    <input type="text" id="countrySearch" class="country-search" placeholder="Search a country…" autocomplete="off">
+    <div class="chips" id="countryChips"></div>
+    <div class="country-list" id="countryList"></div>
+  </section>
+
+  <!-- ============ STEP 2: BUSINESS TYPE ============ -->
+  <section class="step" data-step="2">
+    <h1 class="q-question">What kind of business do you run?</h1>
+    <p class="q-hint">You can pick more than one if it applies.</p>
+    <div class="options single-col" id="businessTypeOptions">
+      <button class="opt" data-value="online_store" type="button">
+        <span class="opt-check"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>
+        <span class="opt-body">
+          <span class="opt-label">Online store / webshop</span>
+          <span class="opt-sub">Shopify, Amazon, WooCommerce, marketplaces…</span>
+        </span>
+      </button>
+      <button class="opt" data-value="gym_designer" type="button">
+        <span class="opt-check"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>
+        <span class="opt-body">
+          <span class="opt-label">Gym designer / sport architect / interior designer</span>
+          <span class="opt-sub">Turnkey studio &amp; fitness space projects</span>
+        </span>
+      </button>
+      <button class="opt" data-value="franchise" type="button">
+        <span class="opt-check"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>
+        <span class="opt-body">
+          <span class="opt-label">Franchise</span>
+          <span class="opt-sub">Multi-location operator or franchisor</span>
+        </span>
+      </button>
+      <button class="opt" data-value="physio_supplier" type="button">
+        <span class="opt-check"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>
+        <span class="opt-body">
+          <span class="opt-label">Physio &amp; rehab equipment supplier</span>
+          <span class="opt-sub">Clinics, physical therapy centers, medical channels</span>
+        </span>
+      </button>
+      <button class="opt" data-value="brick_mortar" type="button">
+        <span class="opt-check"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>
+        <span class="opt-body">
+          <span class="opt-label">Brick &amp; mortar fitness retailer</span>
+          <span class="opt-sub">Physical showroom or store</span>
+        </span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ============ STEP 3: PRODUCT INTEREST ============ -->
+  <section class="step" data-step="3">
+    <h1 class="q-question">Which product lines are you interested in?</h1>
+    <p class="q-hint">Pick one. You can refine later during our call.</p>
+    <div class="options" id="productInterestOptions">
+      <button class="opt" data-value="machines" type="button">
+        <span class="opt-check"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>
+        <span class="opt-body">
+          <span class="opt-label">Pilates machines</span>
+          <span class="opt-sub">Reformers (Flex, Classic, Aero, Essential, Heritage…)</span>
+        </span>
+      </button>
+      <button class="opt" data-value="accessories" type="button">
+        <span class="opt-check"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>
+        <span class="opt-body">
+          <span class="opt-label">Accessories only</span>
+          <span class="opt-sub">Mats, balls, rings, bands, jumpboards, boxes…</span>
+        </span>
+      </button>
+      <button class="opt" data-value="both" type="button" style="grid-column:span 2">
+        <span class="opt-check"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>
+        <span class="opt-body">
+          <span class="opt-label">Both — machines &amp; accessories</span>
+          <span class="opt-sub">Full Pilates&amp;Me catalog</span>
+        </span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ============ STEP 4: BUSINESS MODEL ============ -->
+  <section class="step" data-step="4">
+    <h1 class="q-question">Which business model fits you best?</h1>
+    <p class="q-hint">Not sure? Pick <em>Not sure yet</em> — we&rsquo;ll walk you through the trade-offs on the call.</p>
+    <div class="options single-col" id="businessModelOptions">
+      <button class="opt" data-value="stock" type="button">
+        <span class="opt-check"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>
+        <span class="opt-body">
+          <span class="opt-label">Stock &amp; resell</span>
+          <span class="opt-sub">You buy inventory upfront and warehouse it yourself.</span>
+        </span>
+      </button>
+      <button class="opt" data-value="dropship" type="button" id="dropshipOpt">
+        <span class="opt-check"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>
+        <span class="opt-body">
+          <span class="opt-label">Dropshipping <span class="opt-badge" id="euOnlyBadge" hidden>EU only</span></span>
+          <span class="opt-sub">Pilates&amp;Me ships directly to your customers. No inventory needed.</span>
+        </span>
+      </button>
+      <button class="opt" data-value="hybrid" type="button">
+        <span class="opt-check"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>
+        <span class="opt-body">
+          <span class="opt-label">Hybrid</span>
+          <span class="opt-sub">Some stock for hero SKUs, dropship for the rest.</span>
+        </span>
+      </button>
+      <button class="opt" data-value="not_sure" type="button">
+        <span class="opt-check"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>
+        <span class="opt-body">
+          <span class="opt-label">Not sure yet</span>
+          <span class="opt-sub">Let&rsquo;s discuss what makes sense for your business.</span>
+        </span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ============ STEP 5: VOLUME ============ -->
+  <section class="step" data-step="5">
+    <h1 class="q-question">How many units per month do you expect to sell?</h1>
+    <p class="q-hint">A rough estimate is fine — we just need order of magnitude.</p>
+    <div id="volumeMachinesWrap" class="gauge-group" hidden>
+      <div class="gauge-label">Machines / month</div>
+      <div class="gauge-buttons" data-target="volume_machines">
+        <button class="gauge-btn" data-value="5" type="button">≤ 5</button>
+        <button class="gauge-btn" data-value="10" type="button">10</button>
+        <button class="gauge-btn" data-value="25" type="button">25</button>
+        <button class="gauge-btn" data-value="50" type="button">50</button>
+        <button class="gauge-btn" data-value="100+" type="button">100+</button>
+      </div>
+    </div>
+    <div id="volumeAccessoriesWrap" class="gauge-group" hidden>
+      <div class="gauge-label">Accessories / month</div>
+      <div class="gauge-buttons" data-target="volume_accessories">
+        <button class="gauge-btn" data-value="50" type="button">≤ 50</button>
+        <button class="gauge-btn" data-value="100" type="button">100</button>
+        <button class="gauge-btn" data-value="500" type="button">500</button>
+        <button class="gauge-btn" data-value="1000" type="button">1000</button>
+        <button class="gauge-btn" data-value="1000+" type="button">1000+</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ STEP 6: REVENUE ============ -->
+  <section class="step" data-step="6">
+    <h1 class="q-question">What&rsquo;s your current annual revenue?</h1>
+    <p class="q-hint">This helps us tailor the partnership terms to your stage.</p>
+    <div class="options single-col" id="revenueOptions">
+      <button class="opt" data-value="lt_100k" type="button">
+        <span class="opt-check"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>
+        <span class="opt-body"><span class="opt-label">Less than €100,000</span></span>
+      </button>
+      <button class="opt" data-value="100k_500k" type="button">
+        <span class="opt-check"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>
+        <span class="opt-body"><span class="opt-label">€100,000 – €500,000</span></span>
+      </button>
+      <button class="opt" data-value="500k_2m" type="button">
+        <span class="opt-check"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>
+        <span class="opt-body"><span class="opt-label">€500,000 – €2M</span></span>
+      </button>
+      <button class="opt" data-value="gt_2m" type="button">
+        <span class="opt-check"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>
+        <span class="opt-body"><span class="opt-label">€2M+</span></span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ============ STEP 7: TIMELINE ============ -->
+  <section class="step" data-step="7">
+    <h1 class="q-question">When would you like to start?</h1>
+    <p class="q-hint">No pressure — we&rsquo;ll adapt our timeline to yours.</p>
+    <div class="options single-col" id="timelineOptions">
+      <button class="opt" data-value="ready" type="button">
+        <span class="opt-check"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>
+        <span class="opt-body"><span class="opt-label">Ready to start now</span></span>
+      </button>
+      <button class="opt" data-value="1_3mo" type="button">
+        <span class="opt-check"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>
+        <span class="opt-body"><span class="opt-label">Within 1–3 months</span></span>
+      </button>
+      <button class="opt" data-value="3_6mo" type="button">
+        <span class="opt-check"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>
+        <span class="opt-body"><span class="opt-label">Within 3–6 months</span></span>
+      </button>
+      <button class="opt" data-value="exploring" type="button">
+        <span class="opt-check"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>
+        <span class="opt-body"><span class="opt-label">Just exploring for now</span></span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ============ STEP 8: CONTACT + CALENDLY ============ -->
+  <section class="step" data-step="8">
+    <div id="contactForm">
+      <h1 class="q-question">One last step — how do we reach you?</h1>
+      <p class="q-hint">We&rsquo;ll send your application and open the booking calendar for a 20-min intro call.</p>
+      <div class="form-grid">
+        <div class="field" data-field="first_name">
+          <label>First name</label>
+          <input type="text" id="fldFirstName" autocomplete="given-name">
+          <div class="err-msg">Required.</div>
+        </div>
+        <div class="field" data-field="last_name">
+          <label>Last name</label>
+          <input type="text" id="fldLastName" autocomplete="family-name">
+          <div class="err-msg">Required.</div>
+        </div>
+        <div class="field" data-field="email">
+          <label>Business email</label>
+          <input type="email" id="fldEmail" autocomplete="email">
+          <div class="err-msg">Please enter a valid email.</div>
+        </div>
+        <div class="field" data-field="phone">
+          <label>Phone (with country code)</label>
+          <input type="tel" id="fldPhone" autocomplete="tel" placeholder="+49…">
+          <div class="err-msg">Required.</div>
+        </div>
+        <div class="field" data-field="company">
+          <label>Company name</label>
+          <input type="text" id="fldCompany" autocomplete="organization">
+          <div class="err-msg">Required.</div>
+        </div>
+        <div class="field" data-field="website">
+          <label>Website (optional)</label>
+          <input type="url" id="fldWebsite" placeholder="https://…">
+        </div>
+      </div>
+    </div>
+
+    <div id="successBlock" class="success" hidden>
+      <div class="check"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></div>
+      <h2>Application received.</h2>
+      <p>Book a 20-minute intro call with our distributor team.<br>You&rsquo;ll get an email confirmation with the meeting details.</p>
+      <div class="calendly-embed" id="calendlyEmbed">
+        <!-- Calendly embed goes here — placeholder until real link is provided -->
+        <div style="text-align:center">
+          <p style="font-weight:700;color:#111;margin-bottom:8px">Calendly link coming soon.</p>
+          <p style="font-size:13px">Our team will contact you at the email you provided.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="cta-row">
+  <div class="cta-row-inner">
+    <button class="cta-next" id="nextBtn" type="button" disabled>Continue</button>
+  </div>
+</div>
+
+<script>
+/* =====================================================================
+ * Country data — ISO 3166-1 alpha-2 + EU/EEA flag for dropship eligibility.
+ * ===================================================================== */
+var COUNTRIES = [
+  ['AF','Afghanistan',false],['AL','Albania',false],['DZ','Algeria',false],['AD','Andorra',false],
+  ['AO','Angola',false],['AR','Argentina',false],['AM','Armenia',false],['AU','Australia',false],
+  ['AT','Austria',true],['AZ','Azerbaijan',false],['BH','Bahrain',false],['BD','Bangladesh',false],
+  ['BY','Belarus',false],['BE','Belgium',true],['BJ','Benin',false],['BT','Bhutan',false],
+  ['BO','Bolivia',false],['BA','Bosnia and Herzegovina',false],['BW','Botswana',false],['BR','Brazil',false],
+  ['BN','Brunei',false],['BG','Bulgaria',true],['BF','Burkina Faso',false],['BI','Burundi',false],
+  ['KH','Cambodia',false],['CM','Cameroon',false],['CA','Canada',false],['CV','Cape Verde',false],
+  ['CF','Central African Republic',false],['TD','Chad',false],['CL','Chile',false],['CN','China',false],
+  ['CO','Colombia',false],['CG','Congo',false],['CD','Congo (DRC)',false],['CR','Costa Rica',false],
+  ['HR','Croatia',true],['CU','Cuba',false],['CY','Cyprus',true],['CZ','Czech Republic',true],
+  ['DK','Denmark',true],['DJ','Djibouti',false],['DO','Dominican Republic',false],['EC','Ecuador',false],
+  ['EG','Egypt',false],['SV','El Salvador',false],['EE','Estonia',true],['ET','Ethiopia',false],
+  ['FJ','Fiji',false],['FI','Finland',true],['FR','France',true],['GA','Gabon',false],
+  ['GM','Gambia',false],['GE','Georgia',false],['DE','Germany',true],['GH','Ghana',false],
+  ['GR','Greece',true],['GT','Guatemala',false],['GN','Guinea',false],['HN','Honduras',false],
+  ['HK','Hong Kong',false],['HU','Hungary',true],['IS','Iceland',true],['IN','India',false],
+  ['ID','Indonesia',false],['IR','Iran',false],['IQ','Iraq',false],['IE','Ireland',true],
+  ['IL','Israel',false],['IT','Italy',true],['CI','Ivory Coast',false],['JM','Jamaica',false],
+  ['JP','Japan',false],['JO','Jordan',false],['KZ','Kazakhstan',false],['KE','Kenya',false],
+  ['KW','Kuwait',false],['KG','Kyrgyzstan',false],['LA','Laos',false],['LV','Latvia',true],
+  ['LB','Lebanon',false],['LS','Lesotho',false],['LR','Liberia',false],['LY','Libya',false],
+  ['LI','Liechtenstein',true],['LT','Lithuania',true],['LU','Luxembourg',true],['MO','Macau',false],
+  ['MG','Madagascar',false],['MW','Malawi',false],['MY','Malaysia',false],['MV','Maldives',false],
+  ['ML','Mali',false],['MT','Malta',true],['MR','Mauritania',false],['MU','Mauritius',false],
+  ['MX','Mexico',false],['MD','Moldova',false],['MC','Monaco',true],['MN','Mongolia',false],
+  ['ME','Montenegro',false],['MA','Morocco',false],['MZ','Mozambique',false],['MM','Myanmar',false],
+  ['NA','Namibia',false],['NP','Nepal',false],['NL','Netherlands',true],['NZ','New Zealand',false],
+  ['NI','Nicaragua',false],['NE','Niger',false],['NG','Nigeria',false],['MK','North Macedonia',false],
+  ['NO','Norway',true],['OM','Oman',false],['PK','Pakistan',false],['PA','Panama',false],
+  ['PG','Papua New Guinea',false],['PY','Paraguay',false],['PE','Peru',false],['PH','Philippines',false],
+  ['PL','Poland',true],['PT','Portugal',true],['QA','Qatar',false],['RO','Romania',true],
+  ['RU','Russia',false],['RW','Rwanda',false],['SA','Saudi Arabia',false],['SN','Senegal',false],
+  ['RS','Serbia',false],['SG','Singapore',false],['SK','Slovakia',true],['SI','Slovenia',true],
+  ['SO','Somalia',false],['ZA','South Africa',false],['KR','South Korea',false],['ES','Spain',true],
+  ['LK','Sri Lanka',false],['SD','Sudan',false],['SE','Sweden',true],['CH','Switzerland',true],
+  ['SY','Syria',false],['TW','Taiwan',false],['TJ','Tajikistan',false],['TZ','Tanzania',false],
+  ['TH','Thailand',false],['TG','Togo',false],['TN','Tunisia',false],['TR','Türkiye',false],
+  ['TM','Turkmenistan',false],['UG','Uganda',false],['UA','Ukraine',false],['AE','United Arab Emirates',false],
+  ['GB','United Kingdom',false],['US','United States',false],['UY','Uruguay',false],['UZ','Uzbekistan',false],
+  ['VE','Venezuela',false],['VN','Vietnam',false],['YE','Yemen',false],['ZM','Zambia',false],['ZW','Zimbabwe',false]
+];
+
+/* =====================================================================
+ * State — persisted to localStorage.
+ * ===================================================================== */
+var STORAGE_KEY = 'pmd_answers_v1';
+var TOTAL_STEPS = 8;
+
+var state = {
+  countries: [],
+  business_types: [],
+  product_interest: null,
+  business_model: null,
+  volume_machines: null,
+  volume_accessories: null,
+  annual_revenue: null,
+  timeline: null,
+  first_name: '',
+  last_name: '',
+  email: '',
+  phone: '',
+  company: '',
+  website: ''
+};
+
+function loadState() {
+  try {
+    var raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      var parsed = JSON.parse(raw);
+      for (var k in parsed) if (k in state) state[k] = parsed[k];
+    }
+  } catch (e) {}
+}
+function saveState() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {}
+}
+
+var currentStep = 1;
+
+/* =====================================================================
+ * Step navigation.
+ * ===================================================================== */
+function showStep(n) {
+  currentStep = n;
+  document.querySelectorAll('.step').forEach(function (el) {
+    el.classList.toggle('active', +el.dataset.step === n);
+  });
+  document.getElementById('progressBar').style.width = (n / TOTAL_STEPS * 100) + '%';
+  document.getElementById('stepIndicator').textContent = 'Step ' + n + ' of ' + TOTAL_STEPS;
+  document.getElementById('backBtn').hidden = (n === 1);
+  updateNextButton();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  if (window.pmbTrack) pmbTrack('step_' + n);
+}
+
+function goNext() {
+  if (!canProceed(currentStep)) return;
+  saveState();
+  if (currentStep < TOTAL_STEPS) {
+    if (currentStep === 3) syncVolumeStep();
+    showStep(currentStep + 1);
+    if (currentStep === 4) syncDropshipEligibility();
+  } else {
+    // Step 8 → submit
+    submitForm();
+  }
+}
+function goBack() {
+  if (currentStep > 1) showStep(currentStep - 1);
+}
+
+/* =====================================================================
+ * canProceed — validation per step.
+ * ===================================================================== */
+function canProceed(step) {
+  switch (step) {
+    case 1: return state.countries.length > 0;
+    case 2: return state.business_types.length > 0;
+    case 3: return !!state.product_interest;
+    case 4: return !!state.business_model;
+    case 5:
+      if (state.product_interest === 'machines') return !!state.volume_machines;
+      if (state.product_interest === 'accessories') return !!state.volume_accessories;
+      return !!state.volume_machines && !!state.volume_accessories;
+    case 6: return !!state.annual_revenue;
+    case 7: return !!state.timeline;
+    case 8: return validateContactForm(false);
+    default: return false;
+  }
+}
+
+function updateNextButton() {
+  var btn = document.getElementById('nextBtn');
+  btn.disabled = !canProceed(currentStep);
+  btn.textContent = currentStep === TOTAL_STEPS ? 'Submit application' : 'Continue';
+}
+
+/* =====================================================================
+ * STEP 1 — Country picker (multi-select with search).
+ * ===================================================================== */
+function renderCountryList(filter) {
+  var list = document.getElementById('countryList');
+  var f = (filter || '').trim().toLowerCase();
+  var html = '';
+  COUNTRIES
+    .filter(function (c) { return !f || c[1].toLowerCase().indexOf(f) !== -1; })
+    .forEach(function (c) {
+      var sel = state.countries.indexOf(c[0]) !== -1;
+      html += '<label class="country-row' + (sel ? ' selected' : '') + '" data-code="' + c[0] + '">' +
+        '<input type="checkbox"' + (sel ? ' checked' : '') + '>' +
+        '<span>' + c[1] + '</span>' +
+        (c[2] ? '<span class="eu-tag">EU</span>' : '') +
+        '</label>';
+    });
+  list.innerHTML = html;
+  list.querySelectorAll('.country-row').forEach(function (row) {
+    row.addEventListener('click', function (e) {
+      e.preventDefault();
+      var code = row.dataset.code;
+      var i = state.countries.indexOf(code);
+      if (i === -1) state.countries.push(code);
+      else state.countries.splice(i, 1);
+      row.classList.toggle('selected');
+      row.querySelector('input').checked = row.classList.contains('selected');
+      renderCountryChips();
+      saveState();
+      updateNextButton();
+    });
+  });
+}
+function renderCountryChips() {
+  var chips = document.getElementById('countryChips');
+  chips.innerHTML = state.countries.map(function (code) {
+    var name = (COUNTRIES.find(function (c) { return c[0] === code; }) || [null, code])[1];
+    return '<span class="chip">' + name + '<button type="button" data-remove="' + code + '" aria-label="Remove">×</button></span>';
+  }).join('');
+  chips.querySelectorAll('button[data-remove]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var code = b.dataset.remove;
+      var i = state.countries.indexOf(code);
+      if (i !== -1) state.countries.splice(i, 1);
+      renderCountryChips();
+      renderCountryList(document.getElementById('countrySearch').value);
+      saveState();
+      updateNextButton();
+    });
+  });
+}
+document.getElementById('countrySearch').addEventListener('input', function (e) {
+  renderCountryList(e.target.value);
+});
+
+/* =====================================================================
+ * STEPS 2/3/4/6/7 — option cards.
+ * ===================================================================== */
+function bindMultiSelect(containerId, targetField) {
+  var container = document.getElementById(containerId);
+  container.querySelectorAll('.opt').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var v = btn.dataset.value;
+      var arr = state[targetField];
+      var i = arr.indexOf(v);
+      if (i === -1) arr.push(v); else arr.splice(i, 1);
+      btn.classList.toggle('selected');
+      saveState();
+      updateNextButton();
+    });
+    // Initial render
+    if (state[targetField].indexOf(btn.dataset.value) !== -1) btn.classList.add('selected');
+  });
+}
+function bindSingleSelect(containerId, targetField, onChange) {
+  var container = document.getElementById(containerId);
+  container.querySelectorAll('.opt').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      if (btn.classList.contains('disabled')) return;
+      container.querySelectorAll('.opt').forEach(function (b) { b.classList.remove('selected'); });
+      btn.classList.add('selected');
+      state[targetField] = btn.dataset.value;
+      saveState();
+      updateNextButton();
+      if (onChange) onChange(btn.dataset.value);
+    });
+    if (state[targetField] === btn.dataset.value) btn.classList.add('selected');
+  });
+}
+
+/* =====================================================================
+ * STEP 4 — Dropshipping eligibility (EU-only).
+ * ===================================================================== */
+function hasEuCountry() {
+  return state.countries.some(function (code) {
+    var c = COUNTRIES.find(function (x) { return x[0] === code; });
+    return c && c[2];
+  });
+}
+function syncDropshipEligibility() {
+  var eu = hasEuCountry();
+  var btn = document.getElementById('dropshipOpt');
+  var badge = document.getElementById('euOnlyBadge');
+  if (!eu) {
+    btn.classList.add('disabled');
+    badge.hidden = false;
+    if (state.business_model === 'dropship') {
+      state.business_model = null;
+      btn.classList.remove('selected');
+      saveState();
+      updateNextButton();
+    }
+  } else {
+    btn.classList.remove('disabled');
+    badge.hidden = true;
+  }
+}
+
+/* =====================================================================
+ * STEP 5 — Volume gauges (dynamic based on product_interest).
+ * ===================================================================== */
+function syncVolumeStep() {
+  var pi = state.product_interest;
+  var mWrap = document.getElementById('volumeMachinesWrap');
+  var aWrap = document.getElementById('volumeAccessoriesWrap');
+  mWrap.hidden = !(pi === 'machines' || pi === 'both');
+  aWrap.hidden = !(pi === 'accessories' || pi === 'both');
+}
+document.querySelectorAll('.gauge-buttons').forEach(function (grp) {
+  var target = grp.dataset.target;
+  grp.querySelectorAll('.gauge-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      grp.querySelectorAll('.gauge-btn').forEach(function (b) { b.classList.remove('selected'); });
+      btn.classList.add('selected');
+      state[target] = btn.dataset.value;
+      saveState();
+      updateNextButton();
+    });
+    if (state[target] === btn.dataset.value) btn.classList.add('selected');
+  });
+});
+
+/* =====================================================================
+ * STEP 8 — Contact form + submit.
+ * ===================================================================== */
+function bindContactFields() {
+  ['fldFirstName','fldLastName','fldEmail','fldPhone','fldCompany','fldWebsite'].forEach(function (id) {
+    var el = document.getElementById(id);
+    var field = {
+      fldFirstName: 'first_name', fldLastName: 'last_name', fldEmail: 'email',
+      fldPhone: 'phone', fldCompany: 'company', fldWebsite: 'website'
+    }[id];
+    if (state[field]) el.value = state[field];
+    el.addEventListener('input', function () {
+      state[field] = el.value.trim();
+      saveState();
+      if (currentStep === 8) updateNextButton();
+    });
+  });
+}
+function validateContactForm(showErrors) {
+  var required = ['first_name','last_name','email','phone','company'];
+  var ok = true;
+  required.forEach(function (f) {
+    var v = (state[f] || '').trim();
+    var isValid = !!v;
+    if (f === 'email') isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+    if (!isValid) ok = false;
+    if (showErrors) {
+      var fieldEl = document.querySelector('.field[data-field="' + f + '"]');
+      if (fieldEl) fieldEl.classList.toggle('err', !isValid);
+    }
+  });
+  return ok;
+}
+function submitForm() {
+  if (!validateContactForm(true)) return;
+  document.getElementById('contactForm').hidden = true;
+  document.getElementById('successBlock').hidden = false;
+  document.getElementById('nextBtn').style.display = 'none';
+  if (window.pmbTrack) pmbTrack('quote_submitted', { value: state.product_interest || '' });
+  // TODO Phase 2 : POST to Supabase edge fn `distributor-submit`
+  console.log('[distributor-quiz] submit payload:', Object.assign({ visitor_id: window.pmbVisitorId }, state));
+}
+
+/* =====================================================================
+ * Boot.
+ * ===================================================================== */
+document.getElementById('backBtn').addEventListener('click', goBack);
+document.getElementById('nextBtn').addEventListener('click', goNext);
+
+loadState();
+renderCountryList('');
+renderCountryChips();
+bindMultiSelect('businessTypeOptions', 'business_types');
+bindSingleSelect('productInterestOptions', 'product_interest');
+bindSingleSelect('businessModelOptions', 'business_model');
+bindSingleSelect('revenueOptions', 'annual_revenue');
+bindSingleSelect('timelineOptions', 'timeline');
+bindContactFields();
+syncVolumeStep();
+syncDropshipEligibility();
+showStep(1);
+</script>
+
+</body>
+</html>
