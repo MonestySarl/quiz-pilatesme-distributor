@@ -320,10 +320,10 @@
           <span class="opt-sub">Pilates&amp;Me ships directly to your customers. No inventory needed.</span>
         </span>
       </button>
-      <button class="opt" data-value="hybrid" type="button">
+      <button class="opt" data-value="hybrid" type="button" id="hybridOpt">
         <span class="opt-check"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>
         <span class="opt-body">
-          <span class="opt-label">Hybrid</span>
+          <span class="opt-label">Hybrid <span class="opt-badge" id="euOnlyBadgeHybrid" hidden>EU only</span></span>
           <span class="opt-sub">Some stock for hero SKUs, dropship for the rest.</span>
         </span>
       </button>
@@ -800,20 +800,23 @@ function hasEuCountry() {
 }
 function syncDropshipEligibility() {
   var eu = hasEuCountry();
-  var btn = document.getElementById('dropshipOpt');
-  var badge = document.getElementById('euOnlyBadge');
+  var dsBtn = document.getElementById('dropshipOpt');
+  var hyBtn = document.getElementById('hybridOpt');
+  var dsBadge = document.getElementById('euOnlyBadge');
+  var hyBadge = document.getElementById('euOnlyBadgeHybrid');
   if (!eu) {
-    btn.classList.add('disabled');
-    badge.hidden = false;
-    if (state.business_model === 'dropship') {
+    dsBtn.classList.add('disabled'); dsBadge.hidden = false;
+    hyBtn.classList.add('disabled'); hyBadge.hidden = false;
+    if (state.business_model === 'dropship' || state.business_model === 'hybrid') {
       state.business_model = null;
-      btn.classList.remove('selected');
+      dsBtn.classList.remove('selected');
+      hyBtn.classList.remove('selected');
       saveState();
       updateNextButton();
     }
   } else {
-    btn.classList.remove('disabled');
-    badge.hidden = true;
+    dsBtn.classList.remove('disabled'); dsBadge.hidden = true;
+    hyBtn.classList.remove('disabled'); hyBadge.hidden = true;
   }
 }
 
