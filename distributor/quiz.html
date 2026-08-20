@@ -7,6 +7,7 @@
 <title>Distributor application — Pilates&amp;Me</title>
 <link rel="icon" href="https://cdn.shopify.com/s/files/1/0901/2091/3269/files/Favicon_Pilates_Me.png">
 <script src="/assets/pmb-tracker.js" defer></script>
+<script src="/assets/pmb-pixel.js" defer></script>
 <style>
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
   html{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
@@ -903,10 +904,46 @@ function submitForm() {
   document.getElementById('nextBtn').style.display = 'none';
   if (window.pmbTrack) pmbTrack('quote_submitted', { value: state.product_interest || '' });
 
+  // ---- IDs de tracking (dédup Pixel ↔ CAPI côté Meta + stitching GA4)
+  // Le même eventId part au Pixel navigateur ET à l'edge fn (qui appelle CAPI serveur).
+  var eventId = (window.pmbGenEventId ? pmbGenEventId() : ('evt_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8)));
+  var clientId = (window.pmbGetGA4ClientId ? pmbGetGA4ClientId() : null);
+
+  // Meta Pixel — Lead sans value (leads distributeur = partenariat, pas de conversion €).
+  // Value 0 = event Lead standard, l'algo Meta l'utilise pour l'optimisation sans value-based bidding.
+  try {
+    if (window.pmbFireLead) {
+      window.pmbFireLead({
+        event_id: eventId,
+        value: 0,
+        currency: 'EUR',
+        content_name: 'Distributor application',
+        content_category: 'B2B - Distributor',
+        email: state.email,
+        phone: state.phone,
+        first_name: state.first_name,
+        last_name: state.last_name
+      });
+    }
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({
+      event: 'distributor_lead_submitted',
+      event_id: eventId,
+      client_id: clientId
+    });
+  } catch (e) {}
+
   var payload = Object.assign({}, state, {
     visitor_id: window.pmbVisitorId || null,
     landing_page: window.location.href,
-    referrer: document.referrer || null
+    referrer: document.referrer || null,
+    // Tracking (dédup Meta CAPI + GA4 stitching côté edge fn)
+    tracking: {
+      event_id: eventId,
+      client_id: clientId,
+      event_source_url: window.location.href,
+      funnel: 'distributor'
+    }
   });
 
   fetch(SUBMIT_URL, {
